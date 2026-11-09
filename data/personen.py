@@ -12,23 +12,24 @@ def wg_bewohner():
 
 wg_bewohner_liste = []
 id_number = 1
+def personen_anlegen():
+    while True:
+        answer = input("\nNeuen Bewohner erfassen? ").strip().lower()
 
-while True:
-    answer = input("\nNeuen Bewohner erfassen? ").strip().lower()
+        if answer == "ja":
+            neuer_wg_bewohner = wg_bewohner()
 
-    if answer == "ja":
-        neuer_wg_bewohner = wg_bewohner()
+            neuer_wg_bewohner["id"] = id_number
+            id_number = id_number + 1
 
-        neuer_wg_bewohner["id"] = id_number
-        id_number = id_number + 1
+            wg_bewohner_liste.append(neuer_wg_bewohner)
 
-        wg_bewohner_liste.append(neuer_wg_bewohner)
+            print("WG-Bewohner wurde gespeichert.")
 
-        print("WG-Bewohner wurde gespeichert.")
-
-    else:
-        print("WG-Bewohner Liste komplett")
-        break
+        else:
+            print("WG-Bewohner Liste komplett")
+            break
+    return
 
 for wg_bewohner in wg_bewohner_liste:
     print("-------------------")
