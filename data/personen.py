@@ -11,8 +11,9 @@ def wg_bewohner():
             }
 
 wg_bewohner_liste = []
-id_number = 1
+
 def personen_anlegen():
+    id_number = 1
     while True:
         answer = input("\nNeuen Bewohner erfassen? ").strip().lower()
 

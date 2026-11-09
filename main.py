@@ -23,7 +23,7 @@ def menu_personen():
     print("Option 4: Zurück")
     Wahl_personen = input("Option ").strip()
     if Wahl_personen == "1":
-        personen.person_anlegen()
+        personen.personen_anlegen()
     elif Wahl_personen == "2":
         personen.person_bearbeiten()
     elif Wahl_personen == "3":
@@ -60,4 +60,5 @@ def main():
             main()
         return
 
-main()
+if __name__ == "__main__":
+    main()
