@@ -1,7 +1,7 @@
 from data import ( 
     personen,
     kategorien, 
-    rechnungen
+    rechnungen_data
 )
 from logic import (
     reminder,
