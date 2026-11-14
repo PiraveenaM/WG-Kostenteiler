@@ -1,16 +1,26 @@
 from datetime import date
+from data import rechnungen_data
 
+# US5: Reminder für Überfällige Rechnungen (Piraveena Murugupillai)
+# Die Funktion durchsucht alle erfassten Rechnungen nach abgelaufenen Fristen.
+# Rechnungen, deren Frist vor dem heutigen Datum liegt, werden als überfällig erkannt.
+# Überfällige Rechnungen werden nach Frist und Rechnungsnummer sortiert
+# und mit den wichtigsten Informationen in der Konsole ausgegeben. 
 
 def zeige_ueberfaellige_rechnungen():
+    
+    # Heutiges Datum ermitteln
     heute = date.today()
 
     print(f"Heutiges Datum: {heute}")
 
-    ueberfaellige_anteile = []
+    # Liste für überfällige Rechnungen
+    ueberfaellige_rechnungen = []
 
-    for rechnung in rechnungen_liste:
+    # Alle Rechnungen prüfen
+    for rechnung in rechnungen_data.rechnungen_liste:
 
-        frist = date.fromisformat(rechnung["frist"])
+        frist = date.fromisoformat(rechnung["frist"])
 
         if frist < heute:
             ueberfaellige_rechnungen.append(rechnung)
@@ -19,33 +29,18 @@ def zeige_ueberfaellige_rechnungen():
         print("\nKeine überfälligen Rechnungen vorhanden.")
 
     else:
-         print("\nÜberfällige Rechnungen:")
+        print("\nÜberfällige Rechnungen:")
 
         ueberfaellige_rechnungen.sort(
              key=lambda r: (r["frist"], r["nr"])
         )
 
-
-    # Sortierung nach Zahlungsfrist, Rechnungsnummer und Person
-    ueberfaellige_anteile.sort(
-        key=lambda a: (
-            a["zahlungsfrist"],
-            a["rechnungsnummer"],
-            a["person"]
-        )
-    )
-
-    # Ausgabe
-    if len(ueberfaellige_anteile) == 0:
-        print("\nKeine überfälligen Rechnungen vorhanden.")
-    else:
-        print("\nÜberfällige Rechnungen:")
-
-        for anteil in ueberfaellige_anteile:
+        for rechnung in ueberfaellige_rechnungen:
             print("------------------------------")
-            print("Rechnungsnummer:", anteil["rechnungsnummer"])
-            print("Kategorie:", anteil["kategorie"])
-            print("Zahlungsfrist:", anteil["zahlungsfrist"])
-            print("WG-Bewohner:", anteil["person"])
-            print("Zahlungsempfänger:", anteil["zahlungsempfaenger"])
-            print(f"Offener Betrag: CHF {anteil['betrag']:.2f}")
+            print("Rechnungsnummer:", rechnung["nr"])
+            print("Monat:", rechnung["monat"])
+            print("Kategorie:", rechnung["kategorie"])
+            print("Frist:", rechnung["frist"])
+            print(f"Betrag: CHF {rechnung['betrag']:.2f}")
+            print("Beteiligte Personen:",
+                  ", ".join(rechnung["personen"]))
