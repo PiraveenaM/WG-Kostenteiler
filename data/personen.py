@@ -1,5 +1,11 @@
 from data import rechnungen_data
 
+# US1: WG-Bewohner:innen erfassen (Piraveena Murugupillai)
+# Die Funktion erfasst die Stammdaten von WG-Bewohner:innen.
+# Für jede Person werden Vorname, Name, E-Mailadresse und Telefonnummer gespeichert.
+# Die erfassten Personen stehen danach für weitere Funktionen des
+# WG-Kostenteilers zur Verfügung.
+
 def wg_bewohner():
     name = input("Name: ").strip().title()
     vorname = input("Vorname: ").strip().title()

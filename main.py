@@ -18,16 +18,16 @@ def menu_personen():
     print("Option 2: Person löschen")
     print("Option 3: Personenliste anzeigen")
     print("Option 4: Zurück")
-    Wahl_personen = input("Option ").strip()
-    if Wahl_personen == "1":
+    wahl_personen = input("Option ").strip()
+    if wahl_personen == "1":
         personen.personen_anlegen()
-    elif Wahl_personen == "2":
+    elif wahl_personen == "2":
         vorname = input("Vorname der Person: ")
         name = input("Name der Person: ")
         personen.personen_löschen(vorname, name)
-    elif Wahl_personen == "3":
+    elif wahl_personen == "3":
         personen.wg_bewohner_anzeigen()
-    elif Wahl_personen == "4":
+    elif wahl_personen == "4":
         return
     else:
         print("Bitte geben Sie eine gültige Option an")
@@ -46,17 +46,17 @@ def main():
         print("3. Personen")
         print("4. Kategorien")
         print("5. Menü verlassen")
-        Wahl = input("Wähle ein Menü: ").strip()
+        wahl = input("Wähle ein Menü: ").strip()
 
-        if Wahl == "1":
+        if wahl == "1":
             menu_rechnungen()
-        elif Wahl == "2":
+        elif wahl == "2":
             menu_auswertungen()
-        elif Wahl == "3":
+        elif wahl == "3":
           menu_personen()
-        elif Wahl == "4":
+        elif wahl == "4":
             menu_kategorien()
-        elif Wahl == "5":
+        elif wahl == "5":
             print("Auf wiedersehen!")
             break
         else:
