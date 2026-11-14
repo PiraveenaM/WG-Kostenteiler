@@ -58,5 +58,17 @@ def main():
         else:
             print("Bitte gib eine gültige Zahl ein")
 
+
+def menu_rechnungen():
+    print("Option 1: Rechnung erfassen")
+    print("Option 2: Zurück")
+    wahl_rechnungen = input("Option ").strip()
+    if wahl_rechnungen == "1":
+        rechnungen_data.rechnung_erfassen()
+    elif wahl_rechnungen =="2":
+        return
+    else:
+        print("Bitte geben Sie eine gültige Option an")
 if __name__ == "__main__":
     main()
+

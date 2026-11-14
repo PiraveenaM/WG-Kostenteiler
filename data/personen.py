@@ -1,3 +1,5 @@
+from data import rechnungen_data
+
 def wg_bewohner():
     name = input("Name: ").strip().title()
     vorname = input("Vorname: ").strip().title()
@@ -41,7 +43,7 @@ for wg_bewohner in wg_bewohner_liste:
     print("Telefon:", wg_bewohner["telefon"])
 
 
-# US2 Komplett
+# US2 
 
 def wg_bewohner_anzeigen():
     """Kriterium 1: Zeigt alle WG-Bewohner:innen mit ID, Vorname und Name an."""
@@ -55,7 +57,7 @@ def wg_bewohner_anzeigen():
 
 
 def person_finden(vorname, name):
-    """Sucht eine Person über Vorname und Name - Gross-/Kleinschreibung egal.
+    """Sucht eine Person über Vorname und Name – Gross-/Kleinschreibung egal.
     Gibt das Dictionary der Person zurück oder None, wenn es sie nicht gibt."""
     for bewohner in wg_bewohner_liste:
         gleicher_vorname = bewohner["vorname"].lower() == vorname.strip().lower()
@@ -67,8 +69,12 @@ def person_finden(vorname, name):
 
 def hat_offene_anteile(bewohner):
     """Kriterium 3: True, wenn die Person noch offene Anteile hat.
-    PLATZHALTER: Die Rechnungen gibt es noch nicht (andere User Stories).
-    Sobald es sie gibt, wird hier geprüft, ob die Person noch etwas schuldet."""
+    Solange es noch keinen Bezahlstatus gibt (US9), gilt jeder Anteil als offen.
+    Darum: Ist die Person bei einer Rechnung betroffen, hat sie offene Anteile."""
+    ganzer_name = f"{bewohner['vorname']} {bewohner['name']}"
+    for rechnung in rechnungen_data.rechnungen_liste:
+        if ganzer_name in rechnung["personen"]:
+            return True
     return False
 
 
