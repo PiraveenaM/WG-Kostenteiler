@@ -5,10 +5,7 @@ from data import (
 )
 from logic import (
     reminder,
-    personen_bearbeiten,
-    kategorien_bearbeiten,
-    rechnung_erfassen,
-    rechnung_bearbeiten,
+    rechnung_logic
 )
 from user_interface import (
     rechnung_anzeigen, 
@@ -18,18 +15,20 @@ from user_interface import (
 
 def menu_personen():
     print("Option 1: Person anlegen")
-    print("Option 2: Person bearbeiten")
+    print("Option 2: Person löschen")
     print("Option 3: Personenliste anzeigen")
     print("Option 4: Zurück")
     Wahl_personen = input("Option ").strip()
     if Wahl_personen == "1":
         personen.personen_anlegen()
     elif Wahl_personen == "2":
-        personen.person_bearbeiten()
+        vorname = input("Vorname der Person: ")
+        name = input("Name der Person: ")
+        personen.personen_löschen(vorname, name)
     elif Wahl_personen == "3":
-        personen.personenliste()
+        personen.wg_bewohner_anzeigen()
     elif Wahl_personen == "4":
-         main()
+        return
     else:
         print("Bitte geben Sie eine gültige Option an")
         menu_personen()
@@ -55,10 +54,9 @@ def main():
             menu_kategorien()
         elif Wahl == "5":
             print("Auf wiedersehen!")
+            break
         else:
             print("Bitte gib eine gültige Zahl ein")
-            main()
-        return
 
 if __name__ == "__main__":
     main()

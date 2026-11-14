@@ -41,11 +41,51 @@ for wg_bewohner in wg_bewohner_liste:
     print("Telefon:", wg_bewohner["telefon"])
 
 
+# US2 Komplett
+
 def wg_bewohner_anzeigen():
-    if len(personen.wg_bewohner_liste)==0:
+    """Kriterium 1: Zeigt alle WG-Bewohner:innen mit ID, Vorname und Name an."""
+    if len(wg_bewohner_liste) == 0:
         print("Es sind noch keine WG-Bewohner:innen erfasst.")
         return
 
     print("WG-Bewohner:innen:")
-    for bewohner in personen.wg_bewohner_liste:
+    for bewohner in wg_bewohner_liste:
         print(bewohner["id"], bewohner["vorname"], bewohner["name"])
+
+
+def person_finden(vorname, name):
+    """Sucht eine Person über Vorname und Name - Gross-/Kleinschreibung egal.
+    Gibt das Dictionary der Person zurück oder None, wenn es sie nicht gibt."""
+    for bewohner in wg_bewohner_liste:
+        gleicher_vorname = bewohner["vorname"].lower() == vorname.strip().lower()
+        gleicher_name = bewohner["name"].lower() == name.strip().lower()
+        if gleicher_vorname and gleicher_name:
+            return bewohner
+    return None
+
+
+def hat_offene_anteile(bewohner):
+    """Kriterium 3: True, wenn die Person noch offene Anteile hat.
+    PLATZHALTER: Die Rechnungen gibt es noch nicht (andere User Stories).
+    Sobald es sie gibt, wird hier geprüft, ob die Person noch etwas schuldet."""
+    return False
+
+
+def personen_löschen(vorname, name):
+    """Kriterien 2–4: Löscht eine Person über Vorname und Name.
+    Gibt True zurück, wenn gelöscht wurde, sonst False."""
+    bewohner = person_finden(vorname, name)
+
+    if bewohner == None:
+        print(f"{vorname} {name} wurde nicht gefunden.")
+        return False
+
+    if hat_offene_anteile(bewohner):
+        print(f"{bewohner['vorname']} {bewohner['name']} hat noch offene Anteile "
+              "und kann nicht gelöscht werden.")
+        return False
+
+    wg_bewohner_liste.remove(bewohner)
+    print(f"{bewohner['vorname']} {bewohner['name']} wurde gelöscht.")
+    return True
