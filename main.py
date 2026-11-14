@@ -35,6 +35,10 @@ def menu_personen():
     return
 
 def main():
+
+    # US5: Überfällige Rechnungen beim Programmstart prüfen
+    reminder.zeige_ueberfaellige_rechnungen()
+
     while True:
         print(f"\n=== WG-Kostenteiler ===")
         print("1. Rechnungen")
@@ -57,7 +61,6 @@ def main():
             break
         else:
             print("Bitte gib eine gültige Zahl ein")
-
 
 def menu_rechnungen():
     print("Option 1: Rechnung erfassen")
