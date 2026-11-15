@@ -91,11 +91,23 @@ def menu_kategorien():
 #Menü für Rechnungen
 def menu_rechnungen():
     print("Option 1: Rechnung erfassen")
-    print("Option 2: Zurück")
+    print("Option 2: Alle Rechnungen anzeigen")
+    print("Option 3: Rechnungen nach Monat filtern")
+    print("Option 4: Rechnungen nach Person filtern")
+    print("Option 5: Rechnungen nach Status filtern")
+    print("Option 6: Zurück")
     wahl_rechnungen = input("Option ").strip()
     if wahl_rechnungen == "1":
         rechnungen_data.rechnung_erfassen()
-    elif wahl_rechnungen =="2":
+    elif wahl_rechnungen == "2":
+        rechnung_anzeigen.alle_rechnungen_anzeigen()
+    elif wahl_rechnungen == "3":
+        rechnung_anzeigen.nach_monat_filtern()
+    elif wahl_rechnungen == "4":
+        rechnung_anzeigen.nach_person_filtern()
+    elif wahl_rechnungen == "5":
+        rechnung_anzeigen.nach_status_filtern()
+    elif wahl_rechnungen == "6":
         return
     else:
         print("Bitte geben Sie eine gültige Option an")

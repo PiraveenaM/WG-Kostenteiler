@@ -69,7 +69,22 @@ def nach_person_filtern():
 
       print(f"\n=== Rechnungen von {name} ===")
       rechnungen_anzeigen(gefiltert)
-     
 
 
-    
+def nach_status_filtern():
+    """Kriterium 2 + 3: Zeigt Rechnungen an, bei denen jemand diesen Status hat."""
+    status = input("Status (offen oder bezahlt): ").strip().lower()
+
+    if status != "offen" and status != "bezahlt":
+        print("Fehler: Ungültiger Status. Bitte 'offen' oder 'bezahlt' eingeben.")
+        return
+
+    gefiltert = []
+    for rechnung in rechnungen_data.rechnungen_liste:
+        for person in rechnung["personen"]:
+            if rechnung["bezahlstatus"][person] == status:
+                gefiltert.append(rechnung)
+                break
+
+    print(f"\n=== Rechnungen mit Status '{status}' ===")
+    rechnungen_anzeigen(gefiltert)
