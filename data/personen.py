@@ -75,11 +75,11 @@ def person_finden(vorname, name):
 
 def hat_offene_anteile(bewohner):
     """Kriterium 3: True, wenn die Person noch offene Anteile hat.
-    Solange es noch keinen Bezahlstatus gibt (US9), gilt jeder Anteil als offen.
-    Darum: Ist die Person bei einer Rechnung betroffen, hat sie offene Anteile."""
+    Offen heisst: Die Person ist bei einer Rechnung betroffen
+    und ihr Bezahlstatus ist noch "offen" (wird in US9 auf "bezahlt" gesetzt)."""
     ganzer_name = f"{bewohner['vorname']} {bewohner['name']}"
     for rechnung in rechnungen_data.rechnungen_liste:
-        if ganzer_name in rechnung["personen"]:
+        if ganzer_name in rechnung["personen"] and rechnung["bezahlstatus"][ganzer_name] == "offen":
             return True
     return False
 
