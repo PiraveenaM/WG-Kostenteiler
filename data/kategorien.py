@@ -1,4 +1,5 @@
 import os
+from data import rechnungen_data
 
 # US3: Kategorien anlegen (Kristina Stevic)
 # Die Kategorien werden in einer Textdatei gespeichert (eine Kategorie pro Zeile),
@@ -54,6 +55,46 @@ def kategorie_anlegen():
         nochmal = input("Nochmals versuchen? (ja/nein): ").strip().lower()
         if nochmal != "ja":
             return
+
+
+#US 4
+
+def kategorien_anzeigen():
+    print("Aktuelle Kategorien: ", kategorien_liste)
+    return
+
+#prüft, ob eine Kategorie noch Anteile zugewiesen hat
+def kategorie_offene_anteile(kategorie):
+    for rechnung in rechnungen_data.rechnungen_liste:
+        if rechnung["kategorie"].lower() == kategorie.lower():
+            return True
+    return False
+
+#löscht eine Kategorie und überprüft den Input + Suche, ob Kategorie noch offene Anteile hat
+def kategorien_löschen(löschen_auswahl):
+    löschen = input("Welche Kategorie soll gelöscht werden? ").strip()
+
+    if löschen == "":
+        print("Fehler: Bitte einen Namen eingeben.")
+        return
+
+    suchen = kategorie_existiert(löschen)
+    if suchen == False:
+        print(f"Die Kategorie '{suchen}' exisitiert nicht.")
+        return
+
+    if kategorie_offene_anteile(suchen):
+        print(f"Fehler: Die Kategorie '{suchen} hat noch offene Rechnungen zugewiesen und kann nicht gelöscht werden.")
+        return
+
+    kategorien_liste.remove(suchen)
+    kategorien_speichern()
+    print(f"Die Kategorie'{suchen}' wurde erfolgreich gelöscht.")
+    return True
+
+#Muss noch implementiert werden 
+def kategorie_umbenennen():
+
 
 
 # Beim Importieren des Moduls werden die gespeicherten Kategorien geladen.
