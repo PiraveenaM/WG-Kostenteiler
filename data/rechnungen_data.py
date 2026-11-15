@@ -1,7 +1,8 @@
 # US6: Rechnung erfassen (Enes Varol)
 # Hier werden alle Rechnungen der WG gespeichert.
 # Jede Rechnung ist ein Dictionary mit:
-# nr, monat (JJJJ-MM), kategorie, betrag, personen (Liste mit Namen), frist (JJJJ-MM-TT)
+# nr, monat (JJJJ-MM), kategorie, betrag, personen (Liste mit Namen),
+# bezahlstatus (Dictionary: Name -> "offen" oder "bezahlt"), frist (JJJJ-MM-TT)
 
 from data import kategorien
 from data import personen
@@ -201,12 +202,18 @@ def rechnung_erfassen():
 
     frist = frist_einlesen()
 
+    # Bezahlstatus: Jede betroffene Person startet mit "offen" (für US5 und US9)
+    bezahlstatus = {}
+    for person in betroffene_personen:
+        bezahlstatus[person] = "offen"
+
     neue_rechnung = {
         "nr": nr,
         "monat": monat,
         "kategorie": kategorie,
         "betrag": betrag,
         "personen": betroffene_personen,
+        "bezahlstatus": bezahlstatus,
         "frist": frist}
 
     
