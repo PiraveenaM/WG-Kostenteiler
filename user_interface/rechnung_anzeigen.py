@@ -53,22 +53,22 @@ def nach_monat_filtern():
 
 
 def nach_person_filtern():
-      """Kriterium 2 + 3: Zeigt nur die Rechnungen an, bei denen eine Person betroffen ist."""
-      name = input("Vorname und Name (z. B. Enes Varol): ").strip()
+    """Kriterium 2 + 3: Zeigt nur die Rechnungen an, bei denen eine Person betroffen ist."""
+    name = input("Vorname und Name (z. B. Enes Varol): ").strip()
 
-      if name == "":
-          print("Fehler: Bitte einen Namen eingeben.")
-          return
+    if name == "":
+        print("Fehler: Bitte einen Namen eingeben.")
+        return
 
-      gefiltert = []
-      for rechnung in rechnungen_data.rechnungen_liste:
-          for person in rechnung["personen"]:
-              if person.lower() == name.lower():
-                  gefiltert.append(rechnung)
+    gefiltert = []
+    for rechnung in rechnungen_data.rechnungen_liste:
+        for person in rechnung["personen"]:
+            if person.lower() == name.lower():
+                gefiltert.append(rechnung)
 
 
-      print(f"\n=== Rechnungen von {name} ===")
-      rechnungen_anzeigen(gefiltert)
+    print(f"\n=== Rechnungen von {name} ===")
+    rechnungen_anzeigen(gefiltert)
 
 
 def nach_status_filtern():

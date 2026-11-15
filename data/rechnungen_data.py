@@ -169,7 +169,12 @@ def frist_gueltig(text):
     if not nur_ziffern(jahr) or not nur_ziffern(monat) or not nur_ziffern(tag):
         return False
 
-    return 1 <= int(monat) <= 12 and 1 <= int(tag) <= 31
+    if int(monat) < 1 or int(monat) > 12:
+        return False
+
+    # Maximale Anzahl Tage pro Monat (Februar mit 29, damit Schaltjahre gehen)
+    tage_pro_monat = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    return 1 <= int(tag) <= tage_pro_monat[int(monat) - 1]
 
 
 def frist_einlesen():
@@ -184,7 +189,7 @@ def frist_einlesen():
 
 
 def rechnung_erfassen():
-    """Fragt alle Angnaben einer Rechnung ab und speichert sie in rechnungen_liste."""
+    """Fragt alle Angaben einer Rechnung ab und speichert sie in rechnungen_liste."""
     print("\n--- Neue Rechnung erfassen ---")
 
     nr = rechnungsnummer_einlesen()
