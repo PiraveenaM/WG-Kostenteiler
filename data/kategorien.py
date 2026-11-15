@@ -33,7 +33,7 @@ def kategorie_existiert(name):
     """True, wenn es die Kategorie schon gibt – Gross-/Kleinschreibung egal."""
     for kategorie in kategorien_liste:
         if kategorie.lower() == name.lower():
-            return True
+            return kategorie
     return False
 
 
@@ -60,8 +60,15 @@ def kategorie_anlegen():
 #US 4
 
 def kategorien_anzeigen():
-    print("Aktuelle Kategorien: ", kategorien_liste)
-    return
+    if len(kategorien_liste) == 0:
+        print("Es sind noch keine Kategorien erfasst.")
+        return
+
+    print("Aktuelle Kategorien:")
+    nummer = 1
+    for kategorie in kategorien_liste:
+        print(f"  {nummer}. {kategorie}")
+        nummer = nummer + 1
 
 #prüft, ob eine Kategorie noch Anteile zugewiesen hat
 def kategorie_offene_anteile(kategorie):
@@ -71,7 +78,7 @@ def kategorie_offene_anteile(kategorie):
     return False
 
 #löscht eine Kategorie und überprüft den Input + Suche, ob Kategorie noch offene Anteile hat
-def kategorien_löschen(löschen_auswahl):
+def kategorien_löschen():
     löschen = input("Welche Kategorie soll gelöscht werden? ").strip()
 
     if löschen == "":
@@ -80,20 +87,20 @@ def kategorien_löschen(löschen_auswahl):
 
     suchen = kategorie_existiert(löschen)
     if suchen == False:
-        print(f"Die Kategorie '{suchen}' exisitiert nicht.")
-        return
+        print(f"Die Kategorie '{löschen}' exisitiert nicht.")
+        return False
 
     if kategorie_offene_anteile(suchen):
-        print(f"Fehler: Die Kategorie '{suchen} hat noch offene Rechnungen zugewiesen und kann nicht gelöscht werden.")
+        print(f"Fehler: Die Kategorie '{löschen} hat noch offene Rechnungen zugewiesen und kann nicht gelöscht werden.")
         return
 
     kategorien_liste.remove(suchen)
     kategorien_speichern()
-    print(f"Die Kategorie'{suchen}' wurde erfolgreich gelöscht.")
+    print(f"Die Kategorie'{löschen}' wurde erfolgreich gelöscht.")
     return True
 
-#Muss noch implementiert werden 
-def kategorie_umbenennen():
+#Umbennen-Funktion muss noch eingebaut werden
+
 
 
 
@@ -102,6 +109,6 @@ kategorien_laden()
 
 
 if __name__ == "__main__":
-    # Nur zum Testen: python -m data.kategorien
+     #Nur zum Testen: python -m data.kategorien
     kategorie_anlegen()
     print("Aktuelle Kategorien:", kategorien_liste)
