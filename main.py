@@ -67,26 +67,26 @@ def menu_personen():
 
 #Menü für Kategorien
 def menu_kategorien():
-    print("Option 1: Kategorie anlegen")
-    print("Option 2: Kategorien anzeigen")
-    print("Option 3: Kategorie umbenennen")
-    print("Option 4: Kategorie löschen")
-    print("Option 5: Zurück")
-    wahl_kategorien = input("Option: ").strip()
-    if wahl_kategorien == "1":
-        kategorien.kategorie_anlegen()
-    elif wahl_kategorien == "2":
-        kategorien.kategorien_anzeigen
-    elif wahl_kategorien == "3":
-        kategorien.kategorie_umbenennen()
-    elif wahl_kategorien == "4":
-        kategorien.kategorien_löschen()
-    elif wahl_kategorien == "5":
-        return
-    else:
-        print(f"'{wahl_kategorien}' ist keine gültige Option")
-        menu_kategorien()
-    return
+    while True:
+        print("Option 1: Kategorie anlegen")
+        print("Option 2: Kategorien anzeigen")
+        print("Option 3: Kategorie umbenennen")
+        print("Option 4: Kategorie löschen")
+        print("Option 5: Zurück")
+        wahl_kategorien = input("Option: ").strip()
+        if wahl_kategorien == "1":
+            kategorien.kategorie_anlegen()
+        elif wahl_kategorien == "2":
+            kategorien.kategorien_anzeigen()
+        elif wahl_kategorien == "3":
+            kategorien.kategorie_umbenennen()
+        elif wahl_kategorien == "4":
+            kategorien.kategorien_löschen()
+        elif wahl_kategorien == "5":
+            return
+        else:
+            print(f"'{wahl_kategorien}' ist keine gültige Option")
+    
 
 #Menü für Rechnungen
 def menu_rechnungen():
@@ -99,5 +99,6 @@ def menu_rechnungen():
         return
     else:
         print("Bitte geben Sie eine gültige Option an")
+
 if __name__ == "__main__":
     main()
