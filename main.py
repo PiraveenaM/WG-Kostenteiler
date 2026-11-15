@@ -110,7 +110,8 @@ def menu_rechnungen():
     print("Option 3: Rechnungen nach Monat filtern")
     print("Option 4: Rechnungen nach Person filtern")
     print("Option 5: Rechnungen nach Status filtern")
-    print("Option 6: Zurück")
+    print("Option 6: Bezahlstatus bearbeiten")
+    print("Option 7: Zurück")
     wahl_rechnungen = input("Option ").strip()
     if wahl_rechnungen == "1":
         rechnungen_data.rechnung_erfassen()
@@ -123,6 +124,8 @@ def menu_rechnungen():
     elif wahl_rechnungen == "5":
         rechnung_anzeigen.nach_status_filtern()
     elif wahl_rechnungen == "6":
+        rechnung_logic.bezahlstatus_bearbeiten()
+    elif wahl_rechnungen == "7":
         return
     else:
         print("Bitte geben Sie eine gültige Option an")
