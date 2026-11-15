@@ -87,6 +87,21 @@ def menu_kategorien():
         else:
             print(f"'{wahl_kategorien}' ist keine gültige Option")
     
+#Menü für Auswertungen
+def menu_auswertungen():
+    while True:
+        print("Option 1: Statistik nach Kategorie")
+        print("Option 2: Überfällige Rechnungen anzeigen")
+        print("Option 3: Zurück")
+        wahl_auswertungen = input("Option: ").strip()
+        if wahl_auswertungen == "1":
+            statistik.statistik_nach_kategorie()
+        elif wahl_auswertungen == "2":
+            reminder.zeige_ueberfaellige_rechnungen()
+        elif wahl_auswertungen == "3":
+            return
+        else:
+            print(f"'{wahl_auswertungen}' ist keine gültige Option")
 
 #Menü für Rechnungen
 def menu_rechnungen():
