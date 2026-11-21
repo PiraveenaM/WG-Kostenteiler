@@ -2,10 +2,12 @@
 # Hier werden alle Rechnungen der WG gespeichert.
 # Jede Rechnung ist ein Dictionary mit:
 # nr, monat (JJJJ-MM), kategorie, betrag, personen (Liste mit Namen),
-# bezahlstatus (Dictionary: Name -> "offen" oder "bezahlt"), frist (JJJJ-MM-TT)
+# bezahlstatus (Dictionary: Name -> "offen" oder "bezahlt"), frist (JJJJ-MM-TT),
+# bezahlt_von (wer bezahlt hat) und anteile (Dictionary: Name -> Betrag, aus US7)
 
 from data import kategorien
 from data import personen
+from logic import rechnung_logic
 
 rechnungen_liste = []
 
@@ -205,6 +207,8 @@ def rechnung_erfassen():
     if betroffene_personen == None:
         return
 
+    zahler = rechnung_logic.zahler_waehlen()          # US7: wer hat bezahlt?
+
     frist = frist_einlesen()
 
     # Bezahlstatus: Jede betroffene Person startet mit "offen" (für US5 und US9)
@@ -219,7 +223,8 @@ def rechnung_erfassen():
         "betrag": betrag,
         "personen": betroffene_personen,
         "bezahlstatus": bezahlstatus,
-        "frist": frist}
+        "frist": frist,
+        "bezahlt_von": zahler}
 
     
     rechnungen_liste.append(neue_rechnung)
@@ -229,4 +234,6 @@ def rechnung_erfassen():
     print(f" Kategorie: {kategorie}")
     print(f" Betrag:    {betrag:.2f} CHF")
     print(f" Personen: {betroffene_personen}")
-    print(f" Frist:    {frist}")    
+    print(f" Frist:    {frist}")
+
+    rechnung_logic.rechnung_aufteilen(neue_rechnung)   # US7: Anteile berechnen und anzeigen
