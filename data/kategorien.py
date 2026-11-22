@@ -13,21 +13,30 @@ kategorien_liste = []
 def kategorien_laden():
     """Liest alle Kategorien aus der Datei in die Liste."""
     kategorien_liste.clear()
-    if not os.path.exists(DATEI):
-        return  # beim allerersten Start gibt es die Datei noch nicht
-    with open(DATEI, "r", encoding="utf-8") as datei:
-        for zeile in datei:
-            name = zeile.strip()
-            if name != "":
-                kategorien_liste.append(name)
+    try:
+        with open(DATEI, "r", encoding="utf-8") as datei:
+            for zeile in datei:
+                name = zeile.strip()
+                if name != "":
+                    kategorien_liste.append(name)
+    except FileNotFoundError:
+        pass  # beim allerersten Start gibt es die Datei noch nicht – das ist kein Fehler
+    except OSError:
+        print("Fehler: Die Kategorien konnten nicht geladen werden.")
 
 
 def kategorien_speichern():
-    """Schreibt die ganze Liste in die Datei (überschreibt den alten Inhalt)."""
-    with open(DATEI, "w", encoding="utf-8") as datei:
-        for name in kategorien_liste:
-            datei.write(name + "\n")
-
+    """Schreibt die ganze Liste in die Datei (überschreibt den alten Inhalt).
+    Gibt True zurück, wenn das Speichern geklappt hat, sonst False."""
+    try:
+        with open(DATEI, "w", encoding="utf-8") as datei:
+            for name in kategorien_liste:
+                datei.write(name + "\n")
+    except OSError:
+        print("Fehler: Die Kategorien konnten nicht gespeichert werden.")
+        return False
+    else:
+        return True
 
 def kategorie_existiert(name):
     """True, wenn es die Kategorie schon gibt – Gross-/Kleinschreibung egal."""
@@ -48,8 +57,10 @@ def kategorie_anlegen():
             print(f"Fehler: Die Kategorie '{name}' gibt es bereits.")
         else:
             kategorien_liste.append(name)
-            kategorien_speichern()
-            print(f"Kategorie '{name}' wurde gespeichert.")
+            if kategorien_speichern():
+                print(f"Kategorie '{name}' wurde gespeichert.")
+            else:
+                kategorien_liste.remove(name)   # nicht gespeichert -> auch nicht in der Liste behalten
             return
 
         nochmal = input("Nochmals versuchen? (ja/nein): ").strip().lower()
