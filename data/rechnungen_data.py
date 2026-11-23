@@ -237,3 +237,74 @@ def rechnung_erfassen():
     print(f" Frist:    {frist}")
 
     rechnung_logic.rechnung_aufteilen(neue_rechnung)   # US7: Anteile berechnen und anzeigen
+    rechnungen_speichern()                             # in die Datei schreiben
+
+
+# Speichern und Laden der Rechnungen (Datei data/rechnungen.txt)
+# Aufbau pro Rechnung, jede Angabe auf einer eigenen Zeile (wie in Notebook S08):
+#   nr, monat, kategorie, betrag, frist, bezahlt_von, Anzahl Personen,
+#   danach pro Person 3 Zeilen: Name, Bezahlstatus, Anteil
+
+DATEI = "data/rechnungen.txt"
+
+
+def rechnungen_speichern():
+    """Schreibt alle Rechnungen in die Datei (alter Inhalt wird überschrieben)."""
+    with open(DATEI, "w", encoding="utf-8") as datei:
+        for rechnung in rechnungen_liste:
+            datei.write(rechnung["nr"] + "\n")
+            datei.write(rechnung["monat"] + "\n")
+            datei.write(rechnung["kategorie"] + "\n")
+            datei.write(str(rechnung["betrag"]) + "\n")
+            datei.write(rechnung["frist"] + "\n")
+            datei.write(rechnung["bezahlt_von"] + "\n")
+            datei.write(str(len(rechnung["personen"])) + "\n")
+            for person in rechnung["personen"]:
+                datei.write(person + "\n")
+                datei.write(rechnung["bezahlstatus"][person] + "\n")
+                datei.write(str(rechnung["anteile"][person]) + "\n")
+
+
+def rechnungen_laden():
+    """Liest alle Rechnungen aus der Datei in die Liste."""
+    rechnungen_liste.clear()
+    try:
+        with open(DATEI, "r", encoding="utf-8") as datei:
+            nr = datei.readline()
+            while nr != "":                     # leere Zeile = Ende der Datei
+                monat = datei.readline().rstrip("\n")
+                kategorie = datei.readline().rstrip("\n")
+                betrag = float(datei.readline())
+                frist = datei.readline().rstrip("\n")
+                bezahlt_von = datei.readline().rstrip("\n")
+                anzahl = int(datei.readline())
+
+                # Personen, Bezahlstatus und Anteile wieder aufbauen
+                betroffene_personen = []
+                bezahlstatus = {}
+                anteile = {}
+                for i in range(anzahl):
+                    person = datei.readline().rstrip("\n")
+                    betroffene_personen.append(person)
+                    bezahlstatus[person] = datei.readline().rstrip("\n")
+                    anteile[person] = float(datei.readline())
+
+                rechnung = {
+                    "nr": nr.rstrip("\n"),
+                    "monat": monat,
+                    "kategorie": kategorie,
+                    "betrag": betrag,
+                    "personen": betroffene_personen,
+                    "bezahlstatus": bezahlstatus,
+                    "frist": frist,
+                    "bezahlt_von": bezahlt_von,
+                    "anteile": anteile}
+                rechnungen_liste.append(rechnung)
+
+                nr = datei.readline()           # Nr. der nächsten Rechnung
+    except FileNotFoundError:
+        return      # beim allerersten Start gibt es die Datei noch nicht
+
+
+# Beim Programmstart werden die gespeicherten Rechnungen geladen.
+rechnungen_laden()
