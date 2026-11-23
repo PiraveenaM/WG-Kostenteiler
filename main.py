@@ -48,7 +48,8 @@ def menu_personen():
     print("Option 1: Person anlegen")
     print("Option 2: Person löschen")
     print("Option 3: Personenliste anzeigen")
-    print("Option 4: Zurück")
+    print("Option 4: Person bearbeiten")
+    print("Option 5: Zurück")
     wahl_personen = input("Option ").strip()
     if wahl_personen == "1":
         personen.personen_anlegen()
@@ -59,6 +60,10 @@ def menu_personen():
     elif wahl_personen == "3":
         personen.wg_bewohner_anzeigen()
     elif wahl_personen == "4":
+        vorname = input("Vorname der Person: ")
+        name = input("Name der Person: ")
+        personen.personen_bearbeiten(vorname, name)
+    elif wahl_personen == "5":
         return
     else:
         print("Bitte geben Sie eine gültige Option an")

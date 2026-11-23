@@ -101,3 +101,79 @@ def personen_löschen(vorname, name):
     wg_bewohner_liste.remove(bewohner)
     print(f"{bewohner['vorname']} {bewohner['name']} wurde gelöscht.")
     return True
+
+
+def name_in_rechnungen_ersetzen(alter_name, neuer_name):
+    """Ersetzt einen Namen in allen Rechnungen: in der Personenliste,
+    beim Bezahlstatus, bei den Anteilen und bei bezahlt_von."""
+    for rechnung in rechnungen_data.rechnungen_liste:
+
+        if alter_name in rechnung["personen"]:
+            # Personenliste neu aufbauen, alter Name wird durch neuen ersetzt
+            neue_liste = []
+            for person in rechnung["personen"]:
+                if person == alter_name:
+                    neue_liste.append(neuer_name)
+                else:
+                    neue_liste.append(person)
+            rechnung["personen"] = neue_liste
+
+            # Bezahlstatus: Wert unter neuem Namen speichern, alten Eintrag löschen
+            rechnung["bezahlstatus"][neuer_name] = rechnung["bezahlstatus"][alter_name]
+            del rechnung["bezahlstatus"][alter_name]
+
+            # Anteile (aus US7): gleich wie beim Bezahlstatus
+            rechnung["anteile"][neuer_name] = rechnung["anteile"][alter_name]
+            del rechnung["anteile"][alter_name]
+
+        # Zahler (aus US7) ebenfalls umbenennen
+        if rechnung["bezahlt_von"] == alter_name:
+            rechnung["bezahlt_von"] = neuer_name
+
+
+def personen_bearbeiten(vorname, name):
+    """Ändert Vorname, Name, E-Mail und Telefon einer Person.
+    Enter lässt einen Wert unverändert. Gibt True zurück, wenn gespeichert wurde."""
+    bewohner = person_finden(vorname, name)
+
+    if bewohner == None:
+        print(f"{vorname} {name} wurde nicht gefunden.")
+        return False
+
+    print("Neue Angaben eingeben (Enter = unverändert lassen):")
+    neuer_vorname = input(f"Vorname ({bewohner['vorname']}): ").strip().title()
+    neuer_name = input(f"Name ({bewohner['name']}): ").strip().title()
+    neue_email = input(f"E-Mail ({bewohner['email']}): ").strip().lower()
+    neues_telefon = input(f"Telefon ({bewohner['telefon']}): ").strip()
+
+    # Leere Eingabe = alter Wert bleibt
+    if neuer_vorname == "":
+        neuer_vorname = bewohner["vorname"]
+    if neuer_name == "":
+        neuer_name = bewohner["name"]
+    if neue_email == "":
+        neue_email = bewohner["email"]
+    if neues_telefon == "":
+        neues_telefon = bewohner["telefon"]
+
+    # Gibt es den neuen Namen schon bei einer ANDEREN Person?
+    andere_person = person_finden(neuer_vorname, neuer_name)
+    if andere_person != None and andere_person != bewohner:
+        print(f"Fehler: {neuer_vorname} {neuer_name} gibt es bereits.")
+        return False
+
+    # Namen auch in allen Rechnungen anpassen
+    alter_ganzer_name = f"{bewohner['vorname']} {bewohner['name']}"
+    neuer_ganzer_name = f"{neuer_vorname} {neuer_name}"
+    if neuer_ganzer_name != alter_ganzer_name:
+        name_in_rechnungen_ersetzen(alter_ganzer_name, neuer_ganzer_name)
+        rechnungen_data.rechnungen_speichern()     # geänderte Rechnungen in die Datei schreiben
+
+    # Neue Werte in der Person speichern
+    bewohner["vorname"] = neuer_vorname
+    bewohner["name"] = neuer_name
+    bewohner["email"] = neue_email
+    bewohner["telefon"] = neues_telefon
+
+    print(f"{neuer_ganzer_name} wurde gespeichert.")
+    return True
