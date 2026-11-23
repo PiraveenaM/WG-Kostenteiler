@@ -90,27 +90,56 @@ def kategorie_offene_anteile(kategorie):
 
 #löscht eine Kategorie und überprüft den Input + Suche, ob Kategorie noch offene Anteile hat
 def kategorien_löschen():
-    löschen = input("Welche Kategorie soll gelöscht werden? ").strip()
+    while True:
+        name = input("Welche Kategorie soll gelöscht werden? ").strip()
+        gefunden = kategorie_existiert(name)
 
-    if löschen == "":
-        print("Fehler: Bitte einen Namen eingeben.")
-        return
-
-    suchen = kategorie_existiert(löschen)
-    if suchen == False:
-        print(f"Die Kategorie '{löschen}' exisitiert nicht.")
-        return False
-
-    if kategorie_offene_anteile(suchen):
-        print(f"Fehler: Die Kategorie '{löschen} hat noch offene Rechnungen zugewiesen und kann nicht gelöscht werden.")
-        return
-
-    kategorien_liste.remove(suchen)
-    kategorien_speichern()
-    print(f"Die Kategorie'{löschen}' wurde erfolgreich gelöscht.")
-    return True
+        if name == "":
+            print("Fehler: Ein leerer Name wird nicht übernommen.")
+        elif gefunden == False:
+            print(f"Die Kategorie '{name}' exisitiert nicht.")
+        elif kategorie_offene_anteile(gefunden):
+            print(f"Fehler: Die Kategorie '{name}' hat noch offene Rechnungen zugewiesen und kann nicht gelöscht werden.")
+        else:
+            kategorien_liste.remove(gefunden)
+            if kategorien_speichern():
+                print(f"Die Kategorie'{name}' wurde erfolgreich gelöscht.")
+            else:
+                kategorien_liste.append(gefunden)
+            return
+    
+        nochmal = input("Nochmals versuchen? (ja/nein): ").strip().lower()
+        if nochmal != "ja":
+            return
 
 #Umbennen-Funktion muss noch eingebaut werden
+def kategorie_umbenennen():
+    while True:
+        alter_name = input("Welche Kategorie soll umbenannt werden? ").strip()
+        gefunden = kategorie_existiert(alter_name)
+    
+        if alter_name == "":
+            print("Fehler: Ein leerer Name wird nicht übernommen.")
+        elif gefunden == False:
+            print(f"Die Kategorie '{alter_name}' exisitiert nicht.")
+        else: 
+            kategorie_offene_anteile(gefunden)
+            print(f"Warnung: Die Kategorie '{alter_name}' hat noch offene Anteile zugewiesen!")
+            wahl = input("Fortfahren? (ja/nein): ").strip().lower()
+            if wahl != "ja":
+                return
+            
+            neuer_name = input("Wie lautet der neue Name? ").strip()
+            kategorien_liste[kategorien_liste.index(gefunden)] = neuer_name
+            if kategorien_speichern():
+                print(f"Die Kategorie'{alter_name}' wurde erfolgreich geändert zu '{neuer_name}'.")
+            else:
+                kategorien_liste[kategorien_liste.index(neuer_name)] = gefunden
+            return
+        
+        nochmal = input("Nochmals versuchen? (ja/nein): ").strip().lower()
+        if nochmal != "ja":
+            return
 
 
 
