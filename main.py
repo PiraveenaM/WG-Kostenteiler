@@ -97,13 +97,16 @@ def menu_auswertungen():
     while True:
         print("Option 1: Statistik nach Kategorie")
         print("Option 2: Überfällige Rechnungen anzeigen")
-        print("Option 3: Zurück")
+        print("Option 3: Monatsauszug speichern")
+        print("Option 4: Zurück")
         wahl_auswertungen = input("Option: ").strip()
         if wahl_auswertungen == "1":
             statistik.statistik_nach_kategorie()
         elif wahl_auswertungen == "2":
             reminder.zeige_ueberfaellige_rechnungen()
         elif wahl_auswertungen == "3":
+            export.monatsauszug_speichern()
+        elif wahl_auswertungen == "4":
             return
         else:
             print(f"'{wahl_auswertungen}' ist keine gültige Option")
@@ -116,7 +119,8 @@ def menu_rechnungen():
     print("Option 4: Rechnungen nach Person filtern")
     print("Option 5: Rechnungen nach Status filtern")
     print("Option 6: Bezahlstatus bearbeiten")
-    print("Option 7: Zurück")
+    print("Option 7: Rechnung bearbeiten")
+    print("Option 8: Zurück")
     wahl_rechnungen = input("Option ").strip()
     if wahl_rechnungen == "1":
         rechnungen_data.rechnung_erfassen()
@@ -131,6 +135,8 @@ def menu_rechnungen():
     elif wahl_rechnungen == "6":
         rechnung_logic.bezahlstatus_bearbeiten()
     elif wahl_rechnungen == "7":
+        rechnungen_data.rechnung_bearbeiten()
+    elif wahl_rechnungen == "8":
         return
     else:
         print("Bitte geben Sie eine gültige Option an")
