@@ -180,7 +180,20 @@ def bezahlstatus_bearbeiten():
         return
 
     # Aktuellen Status ermitteln
-    aktueller_status = gefundene_rechnung["bezahlstatus"][person]
+    try:
+
+        aktueller_status = (
+            gefundene_rechnung["bezahlstatus"][person]
+        )
+
+    except KeyError:
+
+        print(
+            "Fehler: Für diese Person existiert "
+            "kein Bezahlstatus."
+        )
+
+        return
 
     print(f"Aktueller Status: {aktueller_status}")
 
