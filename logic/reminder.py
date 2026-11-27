@@ -1,5 +1,6 @@
 from datetime import date
 from data import rechnungen_data
+from logic import rechnung_logic
 
 # US5: Reminder für Überfällige Rechnungen (Piraveena Murugupillai)
 # Die Funktion durchsucht alle erfassten Rechnungen nach abgelaufenen Fristen.
@@ -32,7 +33,7 @@ def zeige_ueberfaellige_rechnungen():
                 # Nur offene Anteile berücksichtigen
                 if status == "offen":
 
-                    offener_betrag = rechnung["anteile"][person]
+                    offener_betrag = rechnung_logic.offener_betrag(rechnung, person)
 
                     if offener_betrag > 0:
 
