@@ -1,3 +1,5 @@
+import os
+
 from data import rechnungen_data
 
 # US1: WG-Bewohner:innen erfassen (Piraveena Murugupillai)
@@ -6,48 +8,187 @@ from data import rechnungen_data
 # Die erfassten Personen stehen danach für weitere Funktionen des
 # WG-Kostenteilers zur Verfügung.
 
-def wg_bewohner():
-    name = input("Name: ").strip().title()
-    vorname = input("Vorname: ").strip().title()
-    email = input("E-Mail: ").strip().lower()
-    telefon = input("Telefon ").strip()
-
-    return {"name": name, 
-            "vorname": vorname,
-            "email": email,
-            "telefon": telefon
-            }
+DATEI = os.path.join(os.path.dirname(__file__), "personen.txt")
 
 wg_bewohner_liste = []
 
+def personen_laden():
+    """Lädt alle gespeicherten Personen."""
+
+    wg_bewohner_liste.clear()
+
+    try:
+
+        with open(DATEI, "r", encoding="utf-8") as datei:
+
+            id_zeile = datei.readline()
+
+            while id_zeile != "":
+
+                person = {
+                    "id": int(id_zeile.strip()),
+                    "name": datei.readline().strip(),
+                    "vorname": datei.readline().strip(),
+                    "email": datei.readline().strip(),
+                    "telefon": datei.readline().strip()
+                }
+
+                wg_bewohner_liste.append(person)
+
+                id_zeile = datei.readline()
+
+    except FileNotFoundError:
+        # Datei existiert beim ersten Start noch nicht
+        pass
+
+    except ValueError:
+        print("Fehler: Ungültige Daten in personen.txt")
+
+    except OSError:
+        print("Fehler: Personen konnten nicht geladen werden.")
+
+
+def personen_speichern():
+    """Speichert alle Personen dauerhaft."""
+
+    try:
+
+        with open(DATEI, "w", encoding="utf-8") as datei:
+
+            for person in wg_bewohner_liste:
+
+                datei.write(str(person["id"]) + "\n")
+                datei.write(person["name"] + "\n")
+                datei.write(person["vorname"] + "\n")
+                datei.write(person["email"] + "\n")
+                datei.write(person["telefon"] + "\n")
+
+    except OSError:
+
+        print("Fehler: Personen konnten nicht gespeichert werden.")
+        return False
+
+    else:
+
+        return True
+
+
+def person_existiert(vorname, name):
+    """Prüft, ob eine Person bereits vorhanden ist."""
+
+    for person in wg_bewohner_liste:
+
+        gleicher_vorname = (
+            person["vorname"].lower()
+            == vorname.lower()
+        )
+
+        gleicher_name = (
+            person["name"].lower()
+            == name.lower()
+        )
+
+        if gleicher_vorname and gleicher_name:
+            return True
+
+    return False
+
+
+def naechste_id():
+    """Ermittelt die nächste freie ID."""
+
+    if len(wg_bewohner_liste) == 0:
+        return 1
+
+    groesste_id = 0
+
+    for person in wg_bewohner_liste:
+
+        if person["id"] > groesste_id:
+            groesste_id = person["id"]
+
+    return groesste_id + 1
+
+
+def wg_bewohner():
+    """Erfasst die Stammdaten eines WG-Bewohners."""
+
+    name = input("Name: ").strip().title()
+    vorname = input("Vorname: ").strip().title()
+    email = input("E-Mail: ").strip().lower()
+    telefon = input("Telefon: ").strip()
+
+    return {
+        "name": name,
+        "vorname": vorname,
+        "email": email,
+        "telefon": telefon
+    }
+
+
 def personen_anlegen():
-    id_number = 1
+    """Erfasst neue WG-Bewohner:innen."""
+
     while True:
-        answer = input("\nNeuen Bewohner erfassen? ").strip().lower()
 
-        if answer == "ja":
-            neuer_wg_bewohner = wg_bewohner()
+        answer = input(
+            "\nNeuen Bewohner erfassen? (ja/nein): "
+        ).strip().lower()
 
-            neuer_wg_bewohner["id"] = id_number
-            id_number = id_number + 1
+        if answer != "ja":
 
-            wg_bewohner_liste.append(neuer_wg_bewohner)
+            print("WG-Bewohner Liste komplett")
+            return
+
+        neuer_wg_bewohner = wg_bewohner()
+
+        # Pflichtfelder prüfen
+
+        if neuer_wg_bewohner["name"] == "":
+
+            print("Fehler: Name darf nicht leer sein.")
+            continue
+
+        if neuer_wg_bewohner["vorname"] == "":
+
+            print("Fehler: Vorname darf nicht leer sein.")
+            continue
+
+        # Dubletten prüfen
+
+        if person_existiert(
+            neuer_wg_bewohner["vorname"],
+            neuer_wg_bewohner["name"]
+        ):
+
+            print(
+                "Fehler: Diese Person existiert bereits."
+            )
+            continue
+
+        # Neue ID vergeben
+
+        neuer_wg_bewohner["id"] = naechste_id()
+
+        wg_bewohner_liste.append(
+            neuer_wg_bewohner
+        )
+
+        # Speichern
+
+        if personen_speichern():
 
             print("WG-Bewohner wurde gespeichert.")
 
         else:
-            print("WG-Bewohner Liste komplett")
-            break
-    return
 
-for wg_bewohner in wg_bewohner_liste:
-    print("-------------------")
-    print("ID:", wg_bewohner["id"])
-    print("Vorname:", wg_bewohner["vorname"])
-    print("Name:", wg_bewohner["name"])
-    print("E-Mail:", wg_bewohner["email"])
-    print("Telefon:", wg_bewohner["telefon"])
+            wg_bewohner_liste.remove(
+                neuer_wg_bewohner
+            )
 
+
+# Personen beim Programmstart laden
+personen_laden()
 
 # US2 
 
