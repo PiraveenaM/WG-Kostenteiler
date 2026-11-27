@@ -22,30 +22,60 @@ def zeige_ueberfaellige_rechnungen():
     # Alle Rechnungen prüfen
     for rechnung in rechnungen_data.rechnungen_liste:
 
-        frist = date.fromisoformat(rechnung["frist"])
+        try:
+
+            frist = date.fromisoformat(rechnung["frist"])
+
+        except ValueError:
+
+            nummer = rechnung.get("nr", "unbekannt")
+
+            print(
+                f"Fehler: Ungültiges Datum in Rechnung "
+                f"{nummer}"
+            )
+
+            continue
 
         # Prüfen, ob die Frist überschritten ist
         if frist < heute:
 
             # Bezahlstatus jeder beteiligten Person prüfen
-            for person, status in rechnung["bezahlstatus"].items():
+            try:
 
-                # Nur offene Anteile berücksichtigen
-                if status == "offen":
+                for person, status in rechnung["bezahlstatus"].items():
 
-                    offener_betrag = rechnung_logic.offener_betrag(rechnung, person)
+                    if status == "offen":
 
-                    if offener_betrag > 0:
+                        offener_betrag = rechnung_logic.offener_betrag(
+                            rechnung,
+                            person
+                        )
 
-                        ueberfaellige_rechnungen.append({
-                            "nr": rechnung["nr"],
-                            "monat": rechnung["monat"],
-                            "kategorie": rechnung["kategorie"],
-                            "frist": rechnung["frist"],
-                            "person": person,
-                            "betrag": offener_betrag,
-                            "bezahlt_von": rechnung["bezahlt_von"]
-                        })
+                        if offener_betrag > 0:
+
+                            ueberfaellige_rechnungen.append({
+
+                                "nr": rechnung["nr"],
+                                "monat": rechnung["monat"],
+                                "kategorie": rechnung["kategorie"],
+                                "frist": rechnung["frist"],
+                                "person": person,
+                                "betrag": offener_betrag,
+                                "bezahlt_von": rechnung["bezahlt_von"]
+
+                            })
+
+            except KeyError:
+
+                nummer = rechnung.get("nr", "unbekannt")
+
+                print(
+                    f"Fehlerhafte Daten in Rechnung "
+                    f"{nummer}"
+                )
+
+                continue
 
     if len(ueberfaellige_rechnungen) == 0:
         print("\nKeine überfälligen Rechnungen vorhanden.")
