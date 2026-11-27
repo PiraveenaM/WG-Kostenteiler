@@ -1,9 +1,11 @@
 # US6: Rechnung erfassen (Enes Varol)
+# US8: Rechnungsdetails bearbeiten (Julian Erni)
 # Hier werden alle Rechnungen der WG gespeichert.
 # Jede Rechnung ist ein Dictionary mit:
 # nr, monat (JJJJ-MM), kategorie, betrag, personen (Liste mit Namen),
 # bezahlstatus (Dictionary: Name -> "offen" oder "bezahlt"), frist (JJJJ-MM-TT),
-# bezahlt_von (wer bezahlt hat) und anteile (Dictionary: Name -> Betrag, aus US7)
+# bezahlt_von (wer bezahlt hat), anteile (Dictionary: Name -> Betrag, aus US7)
+# und bezahlt_betraege (Dictionary: Name -> bereits bezahlter Betrag, für US8)
 
 from data import kategorien
 from data import personen
@@ -20,14 +22,24 @@ def rechnung_existiert(nr):
     return False
 
 
-def rechnungsnummer_einlesen():
-    """Fragt die Rechnungs-Nr. ab, bis sie gültig ist, und gibt sie zurück."""
+def rechnung_finden(nr):
+    """NEU (US8): Gibt die Rechnung mit dieser Nr. zurück oder None."""
+    for rechnung in rechnungen_liste:
+        if rechnung["nr"].lower() == nr.strip().lower():
+            return rechnung
+    return None
+
+
+def rechnungsnummer_einlesen(eigene_nr=""):
+    """Fragt die Rechnungs-Nr. ab, bis sie gültig ist, und gibt sie zurück.
+    NEU (US8): eigene_nr ist beim Bearbeiten die bisherige Nr. der Rechnung.
+    Diese darf wieder eingegeben werden, ohne dass "gibt es bereits" erscheint."""
     while True:
         nr = input("Rechnungs-Nr.: ").strip()
 
         if nr == "":
             print("Fehler: Die Rechnungs-Nr. darf nicht leer sein.")
-        elif rechnung_existiert(nr):
+        elif rechnung_existiert(nr) and nr.lower() != eigene_nr.lower():
             print(f"Fehler: Die Rechnungs-Nr. '{nr}' gibt es bereits.")
         else:
             return nr
@@ -198,7 +210,7 @@ def rechnung_erfassen():
     monat = monat_einlesen()
 
     kategorie = kategorie_waehlen()
-    if kategorie == None: 
+    if kategorie == None:
         return
 
     betrag = betrag_einlesen()
@@ -211,22 +223,17 @@ def rechnung_erfassen():
 
     frist = frist_einlesen()
 
-    # Bezahlstatus: Jede betroffene Person startet mit "offen" (für US5 und US9)
-    bezahlstatus = {}
-    for person in betroffene_personen:
-        bezahlstatus[person] = "offen"
-
     neue_rechnung = {
         "nr": nr,
         "monat": monat,
         "kategorie": kategorie,
         "betrag": betrag,
         "personen": betroffene_personen,
-        "bezahlstatus": bezahlstatus,
+        "bezahlstatus": {},          # wird in rechnung_aufteilen() gesetzt
         "frist": frist,
-        "bezahlt_von": zahler}
+        "bezahlt_von": zahler,
+        "bezahlt_betraege": {}}      # NEU (US8): noch niemand hat etwas bezahlt
 
-    
     rechnungen_liste.append(neue_rechnung)
 
     print(f"\nRechnung {nr} wurde gespeichert:")
@@ -240,10 +247,64 @@ def rechnung_erfassen():
     rechnungen_speichern()                             # in die Datei schreiben
 
 
+# US8: Rechnungsdetails bearbeiten (Julian Erni)
+# Nr., Monat, Kategorie, Betrag und betroffene Personen können geändert werden.
+# Es werden dieselben Einlese-Funktionen wie beim Erfassen verwendet,
+# damit auch dieselben Eingabeprüfungen gelten.
+# Am Schluss werden die Anteile neu berechnet und die Datei gespeichert.
+
+def rechnung_bearbeiten():
+    """Lässt die Angaben einer bestehenden Rechnung ändern."""
+    if len(rechnungen_liste) == 0:
+        print("Es sind keine Rechnungen vorhanden.")
+        return
+
+    nr = input("Rechnungs-Nr. der Rechnung, die du bearbeiten willst: ")
+    rechnung = rechnung_finden(nr)
+    if rechnung == None:
+        print(f"Fehler: Die Rechnung '{nr.strip()}' gibt es nicht.")
+        return
+
+    while True:
+        print(f"\n--- Rechnung {rechnung['nr']} bearbeiten ---")
+        print(f"1. Rechnungs-Nr.:  {rechnung['nr']}")
+        print(f"2. Monat:          {rechnung['monat']}")
+        print(f"3. Kategorie:      {rechnung['kategorie']}")
+        print(f"4. Betrag:         {rechnung['betrag']:.2f} CHF")
+        print(f"5. Personen:       {', '.join(rechnung['personen'])}")
+        print("6. Speichern und zurück")
+        wahl = input("Was möchtest du ändern? ").strip()
+
+        if wahl == "1":
+            rechnung["nr"] = rechnungsnummer_einlesen(rechnung["nr"])
+        elif wahl == "2":
+            rechnung["monat"] = monat_einlesen()
+        elif wahl == "3":
+            kategorie = kategorie_waehlen()
+            if kategorie != None:
+                rechnung["kategorie"] = kategorie
+        elif wahl == "4":
+            rechnung["betrag"] = betrag_einlesen()
+        elif wahl == "5":
+            neue_personen = personen_waehlen()
+            if neue_personen != None:
+                rechnung["personen"] = neue_personen
+        elif wahl == "6":
+            break
+        else:
+            print("Bitte eine Zahl von 1 bis 6 eingeben.")
+
+    # Anteile neu berechnen (US7) -> Bezahlstatus, Guthaben und Differenzen stimmen wieder
+    rechnung_logic.rechnung_aufteilen(rechnung)
+    rechnungen_speichern()
+    print(f"\nRechnung {rechnung['nr']} wurde gespeichert.")
+
+
 # Speichern und Laden der Rechnungen (Datei data/rechnungen.txt)
 # Aufbau pro Rechnung, jede Angabe auf einer eigenen Zeile (wie in Notebook S08):
 #   nr, monat, kategorie, betrag, frist, bezahlt_von, Anzahl Personen,
-#   danach pro Person 3 Zeilen: Name, Bezahlstatus, Anteil
+#   danach pro Person 3 Zeilen: Name, Bezahlstatus, Anteil,
+#   NEU (US8): danach Anzahl Zahlungen und pro Zahlung 2 Zeilen: Name, bezahlter Betrag
 
 DATEI = "data/rechnungen.txt"
 
@@ -263,6 +324,11 @@ def rechnungen_speichern():
                 datei.write(person + "\n")
                 datei.write(rechnung["bezahlstatus"][person] + "\n")
                 datei.write(str(rechnung["anteile"][person]) + "\n")
+            # NEU (US8): bereits bezahlte Beträge
+            datei.write(str(len(rechnung["bezahlt_betraege"])) + "\n")
+            for person in rechnung["bezahlt_betraege"]:
+                datei.write(person + "\n")
+                datei.write(str(rechnung["bezahlt_betraege"][person]) + "\n")
 
 
 def rechnungen_laden():
@@ -289,6 +355,13 @@ def rechnungen_laden():
                     bezahlstatus[person] = datei.readline().rstrip("\n")
                     anteile[person] = float(datei.readline())
 
+                # NEU (US8): bereits bezahlte Beträge wieder aufbauen
+                bezahlt_betraege = {}
+                anzahl_zahlungen = int(datei.readline())
+                for i in range(anzahl_zahlungen):
+                    person = datei.readline().rstrip("\n")
+                    bezahlt_betraege[person] = float(datei.readline())
+
                 rechnung = {
                     "nr": nr.rstrip("\n"),
                     "monat": monat,
@@ -298,7 +371,8 @@ def rechnungen_laden():
                     "bezahlstatus": bezahlstatus,
                     "frist": frist,
                     "bezahlt_von": bezahlt_von,
-                    "anteile": anteile}
+                    "anteile": anteile,
+                    "bezahlt_betraege": bezahlt_betraege}
                 rechnungen_liste.append(rechnung)
 
                 nr = datei.readline()           # Nr. der nächsten Rechnung
