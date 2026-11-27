@@ -123,11 +123,11 @@ def kategorie_umbenennen():
         elif gefunden == False:
             print(f"Die Kategorie '{alter_name}' exisitiert nicht.")
         else: 
-            kategorie_offene_anteile(gefunden)
-            print(f"Warnung: Die Kategorie '{alter_name}' hat noch offene Anteile zugewiesen!")
-            wahl = input("Fortfahren? (ja/nein): ").strip().lower()
-            if wahl != "ja":
-                return
+            if kategorie_offene_anteile(gefunden):
+                print(f"Warnung: Die Kategorie '{alter_name}' hat noch offene Anteile zugewiesen!")
+                wahl = input("Fortfahren? (ja/nein): ").strip().lower()
+                if wahl != "ja":
+                    return
             
             neuer_name = input("Wie lautet der neue Name? ").strip()
             kategorien_liste[kategorien_liste.index(gefunden)] = neuer_name
