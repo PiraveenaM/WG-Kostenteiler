@@ -108,6 +108,11 @@ def name_in_rechnungen_ersetzen(alter_name, neuer_name):
     beim Bezahlstatus, bei den Anteilen und bei bezahlt_von."""
     for rechnung in rechnungen_data.rechnungen_liste:
 
+# Bereits bezahlte Beträge (aus US8) – gilt auch für entfernte Personen mit Guthaben
+        if alter_name in rechnung["bezahlt_betraege"]:
+            rechnung["bezahlt_betraege"][neuer_name] = rechnung["bezahlt_betraege"][alter_name]
+            del rechnung["bezahlt_betraege"][alter_name]
+
         if alter_name in rechnung["personen"]:
             # Personenliste neu aufbauen, alter Name wird durch neuen ersetzt
             neue_liste = []
