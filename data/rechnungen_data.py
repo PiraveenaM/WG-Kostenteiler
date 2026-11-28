@@ -7,6 +7,8 @@
 # bezahlt_von (wer bezahlt hat), anteile (Dictionary: Name -> Betrag, aus US7)
 # und bezahlt_betraege (Dictionary: Name -> bereits bezahlter Betrag, für US8)
 
+import os
+
 from data import kategorien
 from data import personen
 from logic import rechnung_logic
@@ -186,6 +188,13 @@ def frist_gueltig(text):
     if int(monat) < 1 or int(monat) > 12:
         return False
 
+    # 29. Februar nur in einem Schaltjahr
+    if int(monat) == 2 and int(tag) == 29:
+        j = int(jahr)
+        schaltjahr = (j % 4 == 0 and j % 100 != 0) or j % 400 == 0
+        if not schaltjahr:
+            return False
+
     # Maximale Anzahl Tage pro Monat (Februar mit 29, damit Schaltjahre gehen)
     tage_pro_monat = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     return 1 <= int(tag) <= tage_pro_monat[int(monat) - 1]
@@ -306,7 +315,7 @@ def rechnung_bearbeiten():
 #   danach pro Person 3 Zeilen: Name, Bezahlstatus, Anteil,
 #   NEU (US8): danach Anzahl Zahlungen und pro Zahlung 2 Zeilen: Name, bezahlter Betrag
 
-DATEI = "data/rechnungen.txt"
+DATEI = os.path.join(os.path.dirname(__file__), "rechnungen.txt")
 
 
 def rechnungen_speichern():
@@ -378,6 +387,9 @@ def rechnungen_laden():
                 nr = datei.readline()           # Nr. der nächsten Rechnung
     except FileNotFoundError:
         return      # beim allerersten Start gibt es die Datei noch nicht
+    except ValueError:
+        print("Fehler: rechnungen.txt hat ein ungültiges Format. Rechnungen wurden nicht geladen.")
+        rechnungen_liste.clear()
 
 
 # Beim Programmstart werden die gespeicherten Rechnungen geladen.

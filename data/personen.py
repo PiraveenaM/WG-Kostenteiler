@@ -240,6 +240,7 @@ def personen_löschen(vorname, name):
         return False
 
     wg_bewohner_liste.remove(bewohner)
+    personen_speichern()                       # Löschung in die Datei schreiben
     print(f"{bewohner['vorname']} {bewohner['name']} wurde gelöscht.")
     return True
 
@@ -320,6 +321,7 @@ def personen_bearbeiten(vorname, name):
     bewohner["name"] = neuer_name
     bewohner["email"] = neue_email
     bewohner["telefon"] = neues_telefon
+    personen_speichern()                       # Änderung in die Datei schreiben
 
     print(f"{neuer_ganzer_name} wurde gespeichert.")
     return True
